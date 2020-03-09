@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="stylesheets/navBars.css">
+  <link rel="stylesheet" href="stylesheets/patientTests.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <title>NeuroPsi</title>
+</head>
+<body>
+    <nav class="navBar">
+        <ul class="navBar-nav">
+            <li><a href="patientTests.html">Perfil</a></li>
+            <li><a href="patientTests.html">Testes</a></li>
+            <li><a href="#">
+                <span>Pendentes</span>
+                <span id="badge"></span>
+            </a></li>
+            <li><a href="#">Psicólogos</a></li>
+            <li><a href="index.html">Sair</a></li> 
+        </ul>
+    </nav>
+    <header>
+        <img src="images/user1.png">
+        <section id = "patientInfoS">
+        </section>
+    </header>
+    <main>
+        <table id="table">
+            <thead>
+                <tr id="theader">
+                    <th colspan="5">Testes</th>
+                    <th colspan="2">Resultados</th>
+                </tr>
+                <tr>
+                    <th>id</th>
+                    <th>estado</th>
+                    <th></th>
+                    <th>data</th>
+                    <th>agendado por</th>
+                    <th>data</th>
+                    <th>comentário</th>
+                </tr>
+            </thead>
+            <tbody id="testsT">
+            </tbody>
+        </table>
+    </main>
+</body>
+<script src="javascripts/patientTests.js"></script>
+</html>

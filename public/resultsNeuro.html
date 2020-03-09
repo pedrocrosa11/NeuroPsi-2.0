@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="stylesheets/testPatient.css">
+  <link rel="stylesheet" href="stylesheets/navBars.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <title>NeuroPsi</title>
+</head>
+<body>
+    <nav class="navBar">
+        <ul class="navBar-nav">
+            <li><a href="#">Perfil</a></li>
+            <li><a href="patientsList.html">Pacientes</a></li>
+            <li><a href="#">
+                <span>Resultados</span>
+                <span id="badge"></span>
+            </a></li>
+            <li><a href="mapNeuro.html">Mapa</a></li>
+            <li><a href="index.html">Sair</a></li>
+        </ul>
+    </nav>
+    <main>
+        <canvas id="canvas" style="border: medium; border-color: #00F; border-style: solid"></canvas>
+        <form>
+            <input id="playBtn" type="button" value="Play">
+            <input id="pauseBtn" type="button" value="Pause">
+            <input id="clearBtn" type="button" value="Clear">
+        </form>
+    </main>
+</body>
+    <script src="javascripts/resultsNeuro.js"></script>
+    <script src="javascripts/RecordableDrawing.js"></script>
+    <script src="javascripts/drawingSerializer.js"></script>
+</html>
