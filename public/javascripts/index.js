@@ -1,14 +1,15 @@
 
 $("#loginBtn").click(function(){
     var name = $("#name").val();
+    var password = $("#pass").val();
     $.ajax({
-        url: "/api/users/" + name,
+        url: "/api/users/?name=" + name + "&pass=" + password,
         method: "get",
         contentType: "application/json",
         dataType: "json",
         success: function(result, status){
             if(!result.user){
-                alert("Esse utilizador não existe");
+                alert("Username ou Password incorreta");
             }else{
                 if(result.user.patientId != null){
                     sessionStorage.setItem("patientId", result.user.patientId);
@@ -23,3 +24,7 @@ $("#loginBtn").click(function(){
         }
     })
 })
+ 
+
+
+/*var perguntas = [{primeiro:Random(1,20), simbulo:"+", segundo:Random(1,20), respostaDada:"Nao foi respondido"}, ...] */
