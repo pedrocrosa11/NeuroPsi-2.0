@@ -26,10 +26,25 @@ header p {
     color: #f2f2f2;
 }
 
+.wrapper {
+    text-align: center;
+}
+
+input[type="button"]{
+    margin-top: 1%;
+    border: none;
+    height: 50px;
+    width: 300px;
+    background: #3b5998;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 25px;
+}
+
 table{
     width: 90%;
     text-align: center;
-    margin: 4% auto;
+    margin: 2% auto;
 }
 
 thead{

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="stylesheets/navBars.css">
-  <link rel="stylesheet" href="stylesheets/patientsList.css">
+  <link rel="stylesheet" href="stylesheets/patientFile.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <title>NeuroPsi</title>
 </head>
@@ -21,24 +21,35 @@
         </ul>
     </nav>
     <header>
-        <h1>Lista de pacientes</h1>
+        <img src="images/user1.png">
+        <section id = "patientInfoS">
+        </section>
     </header>
     <main>
+        <div class="wrapper">
+        <input id = "reyButton" type="button" value="Testes de Rey" onclick="showTestsRey()">
+        <input id = "discalcButton" type="button" value="Testes de Discalculia">
+        </div>
         <table id="table">
             <thead>
+                <tr id="theader">
+                    <th colspan="4">Testes<img id="testBtn" title="Agendar teste" src="images/plus3.png"></th>
+                    <th colspan="2">Resultados</th>
+                </tr>
                 <tr>
+                    <th>id</th>
+                    <th>estado</th>
                     <th></th>
-                    <th id="lShadow" class="colord">ID</th>
-                    <th class="colord">Nome</th>
-                    <th id="rShadow" class="colord">Idade</th>
-                    <th>&nbsp;</th>
+                    <th>data</th>
+                    <th>data</th>
+                    <th>comentário</th>
                 </tr>
             </thead>
-            <tbody id="patientsT">
+            <tbody id="testsT">
             </tbody>
         </table>
     </main>
 </body>
-<script src="javascripts/patientsList.js"></script>
+<script src="javascripts/patientFileDiscalc.js"></script>
 <script src="javascripts/Inactivity.js"></script>
 </html>

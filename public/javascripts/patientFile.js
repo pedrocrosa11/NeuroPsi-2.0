@@ -11,6 +11,7 @@ var patient;
 var tests;
 
 window.onload = function(){
+    inactivityTime();
     updateNotify("Completed")
     $.ajax({
         url: '/api/patients/'+patientId,

@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="stylesheets/navBars.css">
-  <link rel="stylesheet" href="stylesheets/patientFile.css">
+  <link rel="stylesheet" href="stylesheets/patientTestsDiscalc.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <title>NeuroPsi</title>
 </head>
 <body>
     <nav class="navBar">
         <ul class="navBar-nav">
-            <li><a href="#">Perfil</a></li>
-            <li><a href="patientsList.html">Pacientes</a></li>
+            <li><a href="patientTests.html">Perfil</a></li>
+            <li><a href="patientTests.html">Testes</a></li>
             <li><a href="#">
-                <span>Resultados</span>
+                <span>Pendentes</span>
                 <span id="badge"></span>
             </a></li>
-            <li><a href="mapNeuro.html">Mapa</a></li>
-            <li><a href="index.html">Sair</a></li>
+            <li><a href="#">Psicólogos</a></li>
+            <li><a href="index.html">Sair</a></li> 
         </ul>
     </nav>
     <header>
@@ -27,13 +27,14 @@
     </header>
     <main>
         <div class="wrapper">
-        <input id = "reyButton" type="button" value="Testes de Rey">
+        <input id = "reyButton" type="button" value="Testes de Rey" onclick="showTestsRey()">
         <input id = "discalcButton" type="button" value="Testes de Discalculia">
+        <input id = "temporaryBtn" type="button" value="Temporary Button(discalc test)" onclick="temporaryFunction()">
         </div>
         <table id="table">
             <thead>
                 <tr id="theader">
-                    <th colspan="4">Testes<img id="testBtn" title="Agendar teste" src="images/plus3.png"></th>
+                    <th colspan="5">Testes Discalculia</th>
                     <th colspan="2">Resultados</th>
                 </tr>
                 <tr>
@@ -41,6 +42,7 @@
                     <th>estado</th>
                     <th></th>
                     <th>data</th>
+                    <th>agendado por</th>
                     <th>data</th>
                     <th>comentário</th>
                 </tr>
@@ -50,6 +52,6 @@
         </table>
     </main>
 </body>
-<script src="javascripts/patientFile.js"></script>
+<script src="javascripts/patientTestsDiscalc.js"></script>
 <script src="javascripts/Inactivity.js"></script>
 </html>

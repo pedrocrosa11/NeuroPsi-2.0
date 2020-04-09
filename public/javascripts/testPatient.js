@@ -8,6 +8,7 @@ badgeS.innerHTML = numPendingTest;
 var coords;
 
 window.onload = function(){
+    inactivityTime();
    navigator.geolocation.getCurrentPosition(success, error);
    context.canvas.width  = window.innerWidth*0.99;
    context.canvas.height = window.innerHeight*0.90;

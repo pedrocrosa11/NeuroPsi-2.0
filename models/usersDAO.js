@@ -8,7 +8,7 @@ module.exports.getUser = function(userParams, callback){
     var name = userParams.name
     var pass = userParams.pass
     var hashedPass = hash(pass, options = {salt: 100, rounds: 10})
-    console.log(hashedPass)
+    //console.log(hashedPass)
     mysql.getConnection(function(err, conn){
         if(err){
             callback(err, {code:500, status: "Error in the connection to the database"});

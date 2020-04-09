@@ -6,6 +6,7 @@ const badgeS = document.getElementById("badge");
 badgeS.innerHTML = parseInt(sessionStorage.getItem("numCompletedTests"))
 
 window.onload = function(){
+    inactivityTime();
     context.canvas.width  = window.innerWidth*0.99;
    context.canvas.height = window.innerHeight*0.90;
     

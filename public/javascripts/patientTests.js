@@ -5,6 +5,7 @@ var patient;
 var tests;
 
 window.onload = function(){
+    inactivityTime();
     $.ajax({
         url: '/api/patients/'+patientId,
         method: 'get',
@@ -93,4 +94,8 @@ function notifyHtmlInjection(tests){
     }
     badgeS.innerHTML = count;
     sessionStorage.setItem("numPendingTests", count);
+}
+
+function showTestsDiscalc(){
+    window.location = "patientTestsDiscalc.html"
 }

@@ -4,6 +4,7 @@ const badgeS = document.getElementById("badge");
 var patients;
 
 window.onload = function(){
+    inactivityTime();
     updateNotify("Completed")
     $.ajax({
         url:"/api/neuros/"+neuroId+"/patients",

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="stylesheets/navBars.css">
-  <link rel="stylesheet" href="stylesheets/patientsList.css">
+  <link rel="stylesheet" href="stylesheets/testDiscalc.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <title>NeuroPsi</title>
 </head>
@@ -20,25 +20,19 @@
             <li><a href="index.html">Sair</a></li>
         </ul>
     </nav>
-    <header>
-        <h1>Lista de pacientes</h1>
-    </header>
     <main>
-        <table id="table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th id="lShadow" class="colord">ID</th>
-                    <th class="colord">Nome</th>
-                    <th id="rShadow" class="colord">Idade</th>
-                    <th>&nbsp;</th>
-                </tr>
-            </thead>
-            <tbody id="patientsT">
-            </tbody>
-        </table>
+        <div id="questionNumber">Pergunta: 1/15</div>
+        <section id="section">
+            <div id="firstNumber">4</div>
+            <div id="signal">+</div>
+            <div id="secondNumber">6</div>
+            <div id="equal">=</div>
+            <input id="result"></input>
+        </section>
+        <a href="#" id = "startBtn" class="btn btn-white btn-animate" onclick="loadNextQuestion()">Proximo</a>
     </main>
 </body>
-<script src="javascripts/patientsList.js"></script>
+
+<script src="javascripts/testDiscalc.js"></script>
 <script src="javascripts/Inactivity.js"></script>
 </html>

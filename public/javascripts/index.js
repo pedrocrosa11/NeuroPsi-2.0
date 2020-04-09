@@ -27,4 +27,3 @@ $("#loginBtn").click(function(){
  
 
 
-/*var perguntas = [{primeiro:Random(1,20), simbulo:"+", segundo:Random(1,20), respostaDada:"Nao foi respondido"}, ...] */

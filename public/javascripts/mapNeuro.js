@@ -32,6 +32,7 @@ var patientId;
 var routeControl;
 
 window.onload = function(){
+  inactivityTime();
   updateNotify("Completed")
   L.marker([neuroCoords.y, neuroCoords.x]).addTo(map);
   getNeuroTestsRoutes(neuroId);
