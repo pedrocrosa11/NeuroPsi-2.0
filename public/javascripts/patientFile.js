@@ -3,8 +3,8 @@ const neuroId = parseInt(sessionStorage.getItem('neuroId'));
 const attribId = parseInt(sessionStorage.getItem('attribId'));
 const testsT = document.getElementById("testsT");
 const patientInfoS = document.getElementById("patientInfoS");
-const testBtn = document.getElementById("testBtn");
-testBtn.onclick = scheduleTest;
+const marcarRey = document.getElementById("marcarRey");
+const marcarDiscalc = document.getElementById("marcarDiscalc");
 const badgeS = document.getElementById("badge");
 
 var patient;
@@ -12,7 +12,6 @@ var tests;
 
 window.onload = function(){
     inactivityTime();
-    updateNotify("Completed")
     $.ajax({
         url: '/api/patients/'+patientId,
         method: 'get',
@@ -31,6 +30,7 @@ function patientInfoHtmlInjection(patient){
 
 function testsHtmlInjection(tests){
     var str="";
+    console.log(tests)
     for(t of tests){
         str += "<tr id="+t.testId+" onclick = openTest("+t.testId+",\""+t.testState+"\")><td>"+t.testId+"</td><td>"+t.testState+"</td><td>";
         if(t.testState == "Pending"){
@@ -116,6 +116,21 @@ function scheduleTest(){
     })
 }
 
+//NEW
+function scheduleTestDiscalc(){
+    $.ajax({
+        url:"/api/neuros/"+neuroId+"/patients/"+patientId+"/tests/discalculia",
+        method:"post",
+        data: {attribId: attribId},
+        success: function(data, status){
+            alert("Teste marcado");
+        },
+        error: function(){
+            console.log("Error");
+        }
+    })
+}
+
 function rescheduleTest(testId){
     if(confirm("Quer remarcar o teste "+testId+"?")){
         var comment = prompt("Adicione aqui a razão da remarcação");
@@ -139,8 +154,9 @@ function getNeuroPatientTests(attribId){
         url: '/api/neuros/'+neuroId+'/attributions/'+attribId+'/tests',
         mathod: 'get',
         success: function(result, status){
-            tests = result.tests;
-            testsHtmlInjection(tests);
+            testTypes = result.testTypes;
+            console.log(testTypes)
+            testsHtmlInjection(testTypes.discalc);
         }
     })
 }

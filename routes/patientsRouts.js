@@ -92,4 +92,16 @@ router.post('/:patientId/tests/:testId/routes', function(req, res, next){
     }, next);
 });
 
+//NEW---------------
+router.post('/:patientId/tests/:testId/discalculia/results', function(req, res, next){
+    patientDAO.saveDiscalculia(req.params.testId, JSON.parse(req.body.tests), function(err, result){
+        if(err){
+            res.statusMessage = result.status;
+            res.status(result.code).json(err);
+            return;
+        }
+        res.send({status: "Ok"});
+    }, next);
+});
+
 module.exports = router;

@@ -122,6 +122,26 @@ function convertDate(date){
         return "-";
     } 
 }
+//NEW---------
+module.exports.saveDiscalculia = function(testId, test, callback){
+    mysql.getConnection(function(err, conn){
+        if(err){
+            callback(err, {code:500, status:"Error in a database connection"});
+            return;
+        }
+        for (t of test){
+            var values = [t.firstNumber, t.sign, t.secondNumber, t.result, t.correctAnswer, testId]
+            conn.query("insert into Discalculia (firstNumber, sign, secondNumber, result, correctAnswer, discalc_testId) values (?,?,?,?,?,?)", values, function(err, rows){
+                if(err){
+                    callback(err, {code:500, status:"Error in a database query"});
+                    return;
+                }
+                callback(false, {code:200, status:"Ok"});
+            })
+        }
+    })
+}
+
 
 /*function saveLocation(coords, callback){
     mysql.getConnection(function(err, conn){

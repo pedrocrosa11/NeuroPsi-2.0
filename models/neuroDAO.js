@@ -53,6 +53,88 @@ module.exports.scheduleTest = function(attribId, callback){
     })
 }
 
+//NEW------
+module.exports.scheduleTestDiscalc = function(attribId, callback){
+    mysql.getConnection(function(err, conn){
+        if(err){
+            callback(err, {code:500, status:"Error in the connection to the database"})
+            return;
+        }
+        conn.query("insert into Test (assignedDate, test_attribId) values (?, ?);", [new Date(), attribId], function(err, result){
+            if(err){
+                callback(err, {code:500, status: "Error in a database query"});
+                return;
+            }
+            var lista = guardarPerguntas(0,15);
+            var query = "insert into Discalculia (firstNumber, sign, secondNumber, correctAnswer, discalc_testId) values "
+            var values = []
+            for (l of lista){
+                query += "(?, ?, ?, ?, ?),"
+                values.push(l.firstNumber)
+                values.push(l.sign)
+                values.push(l.secondNumber)
+                values.push(l.correctAnswer)
+                values.push(result.insertId)
+            }
+            query = query.slice(0,-1)
+            conn.query(query, values, function(err, result){
+                if(err){
+                    callback(err, {code:500, status: "Error in a database query"});
+                    return;
+                }
+                callback(false, {code:200, status:"Ok"});
+            });
+        });
+    })
+}
+//COPIA DE testDiscalc.js
+
+//Gera numeros random
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
+//Devolve pergunta de Soma
+function sumQuestion(min, max){
+    var pergunta = {firstNumber: getRandomInt(min, max), sign:"+", secondNumber: getRandomInt(min, max)}
+    pergunta.correctAnswer = pergunta.firstNumber+pergunta.secondNumber
+    return pergunta 
+}
+
+//Devolve pergunta de Subtracao
+function diffQuestion(min, max){
+    var pergunta = {firstNumber: getRandomInt(min, max), sign:"-", secondNumber: getRandomInt(min, max)}
+    pergunta.correctAnswer = pergunta.firstNumber-pergunta.secondNumber
+    return pergunta 
+}
+
+//Devolve pergunta de Multiplicacao
+function multQuestion(min, max){
+    var pergunta = {firstNumber: getRandomInt(min, max), sign:"x", secondNumber: getRandomInt(min, max)}
+    pergunta.correctAnswer = pergunta.firstNumber*pergunta.secondNumber
+    return pergunta 
+}
+
+//Carrega as perguntas todas na lista (window on load)
+function guardarPerguntas(min, max){
+    var lista = []
+    for (i = 0; i < 5; i++){
+        lista.push(sumQuestion(min, max))
+    }
+
+    for (i = 0; i < 5; i++){
+        lista.push(diffQuestion(min, max))
+    }
+
+    for (i = 0; i < 5; i++){
+        lista.push(multQuestion(min, max))
+    }
+    return lista
+}
+
+
 module.exports.getReplay = function(testId, callback, next){
     mysql.getConnection(function(err, conn){
         if(err){
@@ -73,14 +155,15 @@ module.exports.getReplay = function(testId, callback, next){
 }
 
 module.exports.getNeuroPatientTests = function(attribId, callback, next){
+    attribId = JSON.parse(attribId)
+    var testTypes = {}
     mysql.getConnection(function(err, conn){
         if(err){
             callback(err, {code:500, status:"Error in the connection to the database"})
             return;
         }
-        conn.query("select testId, testState, assignedDate, completedDate, comment from Result right outer join Test on testId = result_testId inner join Attribution on test_attribId = attribId where attribId = ?;",
+        conn.query("select * from Discalculia inner join Test on testId = discalc_testId inner join Attribution on test_attribId = attribId where attribId = ?;",
         [attribId], function(err, result){
-            conn.release();
             if(err){
                 callback(err, {code:500, status:"Error in a database query"});
                 return;
@@ -92,7 +175,24 @@ module.exports.getNeuroPatientTests = function(attribId, callback, next){
                     t.comment = "-";
                 }
             }
-            callback(false, {code:200, status:"Ok", tests: result});
+            testTypes.discalc = result
+            conn.query("select * from Rey inner join Test on testId = rey_testId inner join Attribution on test_attribId = attribId where attribId = ?;",
+            [attribId], function(err, result){
+                conn.release();
+                if(err){
+                    callback(err, {code:500, status:"Error in a database query"});
+                    return;
+                }
+                for(t of result){
+                    t.assignedDate = convertDate(t.assignedDate);
+                    t.completedDate = convertDate(t.completedDate);
+                    if(!t.comment){
+                        t.comment = "-";
+                    }
+                }
+                testTypes.rey = result
+                callback(false, {code:200, status:"Ok", testTypes: testTypes});
+            })
         })
     })
 }

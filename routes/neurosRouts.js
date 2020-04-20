@@ -47,6 +47,18 @@ router.post('/:neuroId/patients/:patientId/tests', function(req, res, next){
     }, next);
 });
 
+//NEW
+router.post('/:neuroId/patients/:patientId/tests/discalculia', function(req, res, next){
+    neuroDAO.scheduleTestDiscalc(req.body.attribId, function(err, result){
+        if(err){
+            res.statusMessage = result.status;
+            res.status(result.code).json(err);
+            return;
+        }
+        res.send({status: "ok"});
+    }, next);
+});
+
 router.post('/:neuroId/patients/:patientId/tests/:testId/reschedule', function(req, res, next){
     neuroDAO.rescheduleTest(req.params.testId, req.body.attribId, req.body.comment, function(err, result){
         if(err){

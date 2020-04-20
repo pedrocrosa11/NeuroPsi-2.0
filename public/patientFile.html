@@ -33,7 +33,13 @@
         <table id="table">
             <thead>
                 <tr id="theader">
-                    <th colspan="4">Testes<img id="testBtn" title="Agendar teste" src="images/plus3.png"></th>
+                    <th colspan="4">Testes<div class="dropdown">
+                        <button class="dropbtn">V</button>
+                        <div class="dropdown-content">
+                          <a id = "marcarRey">Rey</a>
+                          <a id = "marcarDiscalc" onclick="scheduleTestDiscalc()">Discalculia</a>
+                        </div>
+                      </div></th>
                     <th colspan="2">Resultados</th>
                 </tr>
                 <tr>

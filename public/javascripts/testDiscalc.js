@@ -1,4 +1,5 @@
 const patientId = parseInt(sessionStorage.getItem("patientId"));
+const testId = parseInt(sessionStorage.getItem("testId"));
 
 var lista = []
 var questionIndex = 0
@@ -12,22 +13,22 @@ function getRandomInt(min, max) {
 
 //Devolve pergunta de Soma
 function sumQuestion(min, max){
-    var pergunta = {first: getRandomInt(min, max), signal:"+", second: getRandomInt(min, max)}
-    pergunta.correctAnswer = pergunta.first+pergunta.second
+    var pergunta = {firstNumber: getRandomInt(min, max), sign:"+", secondNumber: getRandomInt(min, max)}
+    pergunta.correctAnswer = pergunta.firstNumber+pergunta.secondNumber
     return pergunta 
 }
 
 //Devolve pergunta de Subtracao
 function diffQuestion(min, max){
-    var pergunta = {first: getRandomInt(min, max), signal:"-", second: getRandomInt(min, max)}
-    pergunta.correctAnswer = pergunta.first-pergunta.second
+    var pergunta = {firstNumber: getRandomInt(min, max), sign:"-", secondNumber: getRandomInt(min, max)}
+    pergunta.correctAnswer = pergunta.firstNumber-pergunta.secondNumber
     return pergunta 
 }
 
 //Devolve pergunta de Multiplicacao
 function multQuestion(min, max){
-    var pergunta = {first: getRandomInt(min, max), signal:"x", second: getRandomInt(min, max)}
-    pergunta.correctAnswer = pergunta.first*pergunta.second
+    var pergunta = {firstNumber: getRandomInt(min, max), sign:"x", secondNumber: getRandomInt(min, max)}
+    pergunta.correctAnswer = pergunta.firstNumber*pergunta.secondNumber
     return pergunta 
 }
 
@@ -44,7 +45,7 @@ function guardarPerguntas(min, max){
     for (i = 0; i < 5; i++){
         lista.push(multQuestion(min, max))
     }
-}
+} 
 
 //load da proxima pergunta
 function loadNextQuestion(){
@@ -56,15 +57,15 @@ function loadNextQuestion(){
         document.getElementById("startBtn").innerHTML = "Submeter"
     }
     if (questionIndex > 14){
-        //fazer um ajax para enviar a lista para o servidor, depois do servidor guardo na base de dados
+        guardarTeste(testId, lista)
         alert("Teste Submetido")
-        window.location = "patientTestsDiscalc.html" //por isto dentro do ajax depois da confirmacao de ser enviado no futuro
+        window.location = "patientTestsDiscalc.html"
         return
     }  
     document.getElementById("questionNumber").innerHTML = "Pergunta: "+ questionNumber +"/15"
-    document.getElementById("firstNumber").innerHTML = String(lista[questionIndex].first)
-    document.getElementById("signal").innerHTML = (lista[questionIndex].signal)
-    document.getElementById("secondNumber").innerHTML = String(lista[questionIndex].second)
+    document.getElementById("firstNumber").innerHTML = String(lista[questionIndex].firstNumber)
+    document.getElementById("sign").innerHTML = (lista[questionIndex].sign)
+    document.getElementById("secondNumber").innerHTML = String(lista[questionIndex].secondNumber)
     document.getElementById("result").value = ""
     var questionNumber = questionIndex + 1
     document.getElementById("questionNumber").innerHTML = "Pergunta: "+ questionNumber + "/15"
@@ -73,8 +74,20 @@ function loadNextQuestion(){
 
 window.onload = function(){
     //inactivityTime();
-    guardarPerguntas(0, 15)
-    document.getElementById("firstNumber").innerHTML = String(lista[0].first)
-    document.getElementById("signal").innerHTML = (lista[0].signal)
-    document.getElementById("secondNumber").innerHTML = String(lista[0].second)
+    guardarPerguntas(0, 10)
+    document.getElementById("firstNumber").innerHTML = String(lista[0].firstNumber)
+    document.getElementById("sign").innerHTML = (lista[0].sign)
+    document.getElementById("secondNumber").innerHTML = String(lista[0].secondNumber)
+}
+
+function guardarTeste(patientId, testName){
+    $.ajax({
+        url: "/api/patients/"+patientId+"/tests/"+testId+"/discalculia/results",
+        method: "post",
+        data: {tests:JSON.stringify(lista)},
+        success: function(res, status){
+            alert("Teste submetido");
+            window.location = "patientTestsDiscalc.html";
+        }
+    });
 }
