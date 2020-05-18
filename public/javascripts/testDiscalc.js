@@ -1,93 +1,61 @@
-const patientId = parseInt(sessionStorage.getItem("patientId"));
+const attribId = parseInt(sessionStorage.getItem("attribId"));
 const testId = parseInt(sessionStorage.getItem("testId"));
+const patientId = parseInt(sessionStorage.getItem("patientId"));
 
-var lista = []
-var questionIndex = 0
-
-//Gera numeros random
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min;
-  }
-
-//Devolve pergunta de Soma
-function sumQuestion(min, max){
-    var pergunta = {firstNumber: getRandomInt(min, max), sign:"+", secondNumber: getRandomInt(min, max)}
-    pergunta.correctAnswer = pergunta.firstNumber+pergunta.secondNumber
-    return pergunta 
-}
-
-//Devolve pergunta de Subtracao
-function diffQuestion(min, max){
-    var pergunta = {firstNumber: getRandomInt(min, max), sign:"-", secondNumber: getRandomInt(min, max)}
-    pergunta.correctAnswer = pergunta.firstNumber-pergunta.secondNumber
-    return pergunta 
-}
-
-//Devolve pergunta de Multiplicacao
-function multQuestion(min, max){
-    var pergunta = {firstNumber: getRandomInt(min, max), sign:"x", secondNumber: getRandomInt(min, max)}
-    pergunta.correctAnswer = pergunta.firstNumber*pergunta.secondNumber
-    return pergunta 
-}
-
-//Carrega as perguntas todas na lista (window on load)
-function guardarPerguntas(min, max){
-    for (i = 0; i < 5; i++){
-        lista.push(sumQuestion(min, max))
-    }
-
-    for (i = 0; i < 5; i++){
-        lista.push(diffQuestion(min, max))
-    }
-
-    for (i = 0; i < 5; i++){
-        lista.push(multQuestion(min, max))
-    }
-} 
-
-//load da proxima pergunta
-function loadNextQuestion(){
-    var answer = document.getElementById("result").value
-    lista[questionIndex].answer = parseInt(answer)
-    questionIndex++
-
-    if (questionIndex > 13){
-        document.getElementById("startBtn").innerHTML = "Submeter"
-    }
-    if (questionIndex > 14){
-        guardarTeste(testId, lista)
-        alert("Teste Submetido")
-        window.location = "patientTestsDiscalc.html"
-        return
-    }  
-    document.getElementById("questionNumber").innerHTML = "Pergunta: "+ questionNumber +"/15"
-    document.getElementById("firstNumber").innerHTML = String(lista[questionIndex].firstNumber)
-    document.getElementById("sign").innerHTML = (lista[questionIndex].sign)
-    document.getElementById("secondNumber").innerHTML = String(lista[questionIndex].secondNumber)
-    document.getElementById("result").value = ""
-    var questionNumber = questionIndex + 1
-    document.getElementById("questionNumber").innerHTML = "Pergunta: "+ questionNumber + "/15"
-}
-
+var discalc
+var discalcIndex = -1
 
 window.onload = function(){
     //inactivityTime();
-    guardarPerguntas(0, 10)
-    document.getElementById("firstNumber").innerHTML = String(lista[0].firstNumber)
-    document.getElementById("sign").innerHTML = (lista[0].sign)
-    document.getElementById("secondNumber").innerHTML = String(lista[0].secondNumber)
+    $.ajax({
+        url: "/api/patients/"+patientId+"/tests/"+testId,
+        method: "get",
+        success: function(result, status){
+            discalc = result.discalc
+            loadNextQuestion()
+        }
+    });
 }
 
-function guardarTeste(patientId, testName){
+function loadNextQuestion(){
+    if(discalcIndex != -1){
+        saveResult()
+    }
+    discalcIndex++
+    if(discalc.length == discalcIndex){
+        guardarDiscalcResults(testId)
+        return
+    }
+    var question = discalc[discalcIndex]
+    var elem = document.getElementById("section")
+    var str = 
+            "<div id='firstNumber'>"+question.firstNumber+"</div>"
+            +"<div id='sign'>"+question.sign+"</div>"
+            +"<div id='secondNumber'>"+question.secondNumber+"</div>"
+            +"<div id='equal'>=</div>"
+            +"<input type='text' id='result'>"
+    elem.innerHTML = str
+    elem  = document.getElementById('questionNumber')
+    var i = discalcIndex+1
+    elem.innerHTML = "Pergunta: "+i+"/15"
+}
+
+
+function saveResult(){
+    console.log(document.getElementById("result").value)
+    console.log(document.getElementById("result"))
+    var result = document.getElementById("result").value
+    discalc[discalcIndex].result = result
+}
+
+function guardarDiscalcResults(testId){
     $.ajax({
         url: "/api/patients/"+patientId+"/tests/"+testId+"/discalculia/results",
         method: "post",
-        data: {tests:JSON.stringify(lista)},
+        data: {discalc:JSON.stringify(discalc)},
         success: function(res, status){
             alert("Teste submetido");
-            window.location = "patientTestsDiscalc.html";
+            window.location = "patientTests.html";
         }
     });
 }

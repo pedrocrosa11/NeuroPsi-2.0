@@ -36,6 +36,17 @@ router.get('/:patientId/tests', function(req, res, next){
     }, next);
 });
 
+router.get('/:patientId/tests/:testId', function(req, res, next){
+    patientsDAO.getDiscalcTest(req.params.testId, function(err, result){
+        if(err){
+            res.statusMessage = result.status;
+            res.status(result.code).json(err);
+            return;
+        }
+        res.status(200).send(result);
+    }, next);
+});
+
 router.post('/:patientId/tests/:testId/replay', function(req, res, next){
     var coords = {lat: req.body.lat, lng: req.body.lng};
     patientsDAO.saveReplay(req.params.testId, coords, req.body.rec, function(err, result){
@@ -94,7 +105,7 @@ router.post('/:patientId/tests/:testId/routes', function(req, res, next){
 
 //NEW---------------
 router.post('/:patientId/tests/:testId/discalculia/results', function(req, res, next){
-    patientDAO.saveDiscalculia(req.params.testId, JSON.parse(req.body.tests), function(err, result){
+    patientsDAO.saveDiscalculiaResults(req.params.testId, JSON.parse(req.body.discalc), function(err, result){
         if(err){
             res.statusMessage = result.status;
             res.status(result.code).json(err);

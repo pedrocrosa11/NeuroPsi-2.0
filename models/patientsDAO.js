@@ -89,13 +89,29 @@ module.exports.cancelTest = function(testId, comment, callback, next){
     })
 }
 
+module.exports.getDiscalcTest = function(testId, callback, next){
+    mysql.getConnection(function(err, conn){
+        if(err){
+            callback(err, {code:500, status:"Error in the connection to the database"})
+            return;
+        }
+        conn.query("select * from Discalculia where discalc_testId = ?;", [testId], function(err, result){
+            if(err){
+                callback(err, {code:500, status: "Error in a database query"});
+                return;
+            }
+            callback(false, {code:200, status:"Ok", discalc:result});
+        });
+    })
+}
+
 module.exports.getPatientTests = function(patientId, callback, next){
     mysql.getConnection(function(err, conn){
         if(err){
             callback(err, {code:500, status:"Error in the connection to the database"})
             return;
         }
-        conn.query("select testId, testState, assignedDate, name as neuro, attribId, completedDate, comment from User inner join Neuropsi on neuro_userId = userId inner join Attribution on attrib_neuroId = neuroId inner join Test on test_attribId = attribId left outer join Result on testId = result_testId where attrib_fileId = ? order by assignedDate desc;",
+        conn.query("select testId, testState, assignedDate, name as neuro, attribId, completedDate, comment from User inner join Neuropsi on neuro_userId = userId inner join Attribution on attrib_neuroId = neuroId inner join Test on test_attribId = attribId where attrib_fileId = ? order by assignedDate desc;",
         [patientId], function(err, result){
             conn.release();
             if(err){
@@ -123,23 +139,40 @@ function convertDate(date){
     } 
 }
 //NEW---------
-module.exports.saveDiscalculia = function(testId, test, callback){
+module.exports.saveDiscalculiaResults = function(testId, discalc, callback){
+    console.log(discalc)
     mysql.getConnection(function(err, conn){
         if(err){
             callback(err, {code:500, status:"Error in a database connection"});
             return;
         }
-        for (t of test){
-            var values = [t.firstNumber, t.sign, t.secondNumber, t.result, t.correctAnswer, testId]
-            conn.query("insert into Discalculia (firstNumber, sign, secondNumber, result, correctAnswer, discalc_testId) values (?,?,?,?,?,?)", values, function(err, rows){
-                if(err){
-                    callback(err, {code:500, status:"Error in a database query"});
-                    return;
-                }
-                callback(false, {code:200, status:"Ok"});
-            })
-        }
+        var query = "update Test set testState = ? where testId = ?"
+        conn.query(query, ["Completed", testId], function(err, rows){
+            if(err){
+                callback(err, {code:500, status:err});
+                return;
+            }
+            safeResultRow(conn, testId, discalc, callback)
+        })
     })
+}
+
+function safeResultRow(conn, testId, discalc, callback){
+    if(discalc.length > 0){
+        var result = discalc[0].result
+        var discalcId = discalc[0].discalcId
+        var query = "update Discalculia set result = ? where discalcId = ?;"
+        conn.query(query, [result, discalcId], function(err, rows){
+            if(err){
+                callback(err, {code:500, status:err});
+                return;
+            }
+            discalc.shift()
+            safeResultRow(conn, testId, discalc, callback)
+        })
+    }else{
+        callback(false, {code:200, status:"Ok"});
+    }
 }
 
 

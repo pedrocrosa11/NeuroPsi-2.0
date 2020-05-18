@@ -52,7 +52,7 @@ function disableOnclick(testId){
 
 function enableOnclick(testId, testState, attribId){
     var elements = document.getElementById(testId);
-    elements.onclick = openTest(testId, String(testState), attribId);
+    elements.onclick = openDiscalcTest(testId, String(testState), attribId);
 }
 
 function cancelTest(testId){
@@ -81,6 +81,18 @@ function openTest(testId, testState, attribId) {
             window.location = 'testPatient.html';
         }else if(testState == "Completed"){
             window.location = 'resultsPatient.html'
+        } 
+    };
+}
+
+function openDiscalcTest(testId, testState, attribId) {
+    return function(){
+        sessionStorage.setItem("testId", testId)
+        sessionStorage.setItem("attribId", attribId)
+        if(testState == "Pending"){
+            window.location = 'testDiscalc.html';
+        }else if(testState == "Completed"){
+            window.location = 'resultsPatientDiscalc.html'
         } 
     };
 }

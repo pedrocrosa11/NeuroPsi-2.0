@@ -154,16 +154,15 @@ module.exports.getReplay = function(testId, callback, next){
     })
 }
 
-module.exports.getNeuroPatientTests = function(attribId, callback, next){
-    attribId = JSON.parse(attribId)
-    var testTypes = {}
+module.exports.getNeuroPatientTestInfo = function(attribId, callback, next){
     mysql.getConnection(function(err, conn){
         if(err){
             callback(err, {code:500, status:"Error in the connection to the database"})
             return;
         }
-        conn.query("select * from Discalculia inner join Test on testId = discalc_testId inner join Attribution on test_attribId = attribId where attribId = ?;",
+        conn.query("select testId, testState, assignedDate, attribId, completedDate, comment from User inner join Neuropsi on neuro_userId = userId inner join Attribution on attrib_neuroId = neuroId inner join Test on test_attribId = attribId where attribId=? order by assignedDate desc;",
         [attribId], function(err, result){
+            conn.release();
             if(err){
                 callback(err, {code:500, status:"Error in a database query"});
                 return;
@@ -175,24 +174,7 @@ module.exports.getNeuroPatientTests = function(attribId, callback, next){
                     t.comment = "-";
                 }
             }
-            testTypes.discalc = result
-            conn.query("select * from Rey inner join Test on testId = rey_testId inner join Attribution on test_attribId = attribId where attribId = ?;",
-            [attribId], function(err, result){
-                conn.release();
-                if(err){
-                    callback(err, {code:500, status:"Error in a database query"});
-                    return;
-                }
-                for(t of result){
-                    t.assignedDate = convertDate(t.assignedDate);
-                    t.completedDate = convertDate(t.completedDate);
-                    if(!t.comment){
-                        t.comment = "-";
-                    }
-                }
-                testTypes.rey = result
-                callback(false, {code:200, status:"Ok", testTypes: testTypes});
-            })
+            callback(false, {code:200, status:"Ok", tests: result});
         })
     })
 }

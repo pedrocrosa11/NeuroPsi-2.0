@@ -154,9 +154,9 @@ function getNeuroPatientTests(attribId){
         url: '/api/neuros/'+neuroId+'/attributions/'+attribId+'/tests',
         mathod: 'get',
         success: function(result, status){
-            testTypes = result.testTypes;
-            console.log(testTypes)
-            testsHtmlInjection(testTypes.discalc);
+            tests = result.tests;
+            console.log(tests)
+            testsHtmlInjection(tests);
         }
     })
 }
