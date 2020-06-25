@@ -32,17 +32,30 @@ function testsHtmlInjection(tests){
     var str="";
     console.log(tests)
     for(t of tests){
-        str += "<tr id="+t.testId+" onclick = openTest("+t.testId+",\""+t.testState+"\")><td>"+t.testId+"</td><td>"+t.testState+"</td><td>";
+        var testType
+        if(t.discalcId){
+            testType = "discalc"
+        }else if(t.reyId){
+            testType = "rey"
+        }
+        str += "<tr id="+t.testId+" onclick = 'openTest("+t.testId+","+t.testState+","+testType+")'><td>"+t.testId+"</td><td>"+t.testState+"</td><td>";
         if(t.testState == "Pending"){
-            str+="<img id='binDelete' title='Cancelar teste' onclick=cancelTest("+t.testId+") onmouseover='disableOnclick("+t.testId+")' onmouseout='enableOnclick("+t.testId+","+t.testState+")' src='images/binDelete.png'>";
+            str+="<img id='binDelete' title='Cancelar teste' onclick=cancelTest("+t.testId+") onmouseover='disableOnclick("+t.testId+")' onmouseout='enableOnclick("+t.testId+","+t.testState+","+testType+")' src='images/binDelete.png'>";
         }else if(t.testState == "Completed"){
-            str+="<img title='Arquivar teste' onclick=fileTest("+t.testId+") onmouseover='disableOnclick("+t.testId+")' onmouseout='enableOnclick("+t.testId+",\""+t.testState+"\")' src='images/file.png'><img title='Remarcar teste' onclick=rescheduleTest("+t.testId+") onmouseover='disableOnclick("+t.testId+")' onmouseout='enableOnclick("+t.testId+",\""+t.testState+"\")' src='images/reschedule.png'>";
+            console.log(t.testState)
+            str+="<img title='Arquivar teste' onclick=fileTest("+t.testId+") onmouseover='disableOnclick("+t.testId+")' onmouseout='enableOnclick("+t.testId+","+t.testState+","+testType+")' src='images/file.png'><img title='Remarcar teste' onclick='rescheduleTest("+t.testId+","+testType+")' onmouseover='disableOnclick("+t.testId+")' onmouseout='enableOnclick("+t.testId+","+t.testState+","+testType+")' src='images/reschedule.png'>";
         }
         str += "</td><td>"+t.assignedDate+"</td><td>"+t.completedDate+"</td><td>"+t.comment+"</td></tr>"; 
     }
     testsT.innerHTML = str;
     for(t of tests){
-        enableOnclick(t.testId, t.testState);
+        var testType
+        if(t.discalcId){
+            testType = "discalc"
+        }else if(t.reyId){
+            testType = "rey"
+        }
+        enableOnclick(t.testId, t.testState, testType);
     }
 }
 
@@ -51,9 +64,10 @@ function disableOnclick(testId){
     elements.onclick = null;
 }
 
-function enableOnclick(testId, testState){
+function enableOnclick(testId, testState, testType){
+    console.log(testState)
     var elements = document.getElementById(testId);
-    elements.onclick = openTest(testId, testState);
+    elements.onclick = openTest(testId, testState, testType);
 }
 
 function cancelTest(testId){
@@ -92,12 +106,16 @@ function fileTest(testId){
     }
 }
 
-function openTest(testId, testState) {
+function openTest(testId, testState, testType) {
     return function(){
         sessionStorage.setItem("testId", testId)
         sessionStorage.setItem("attribId", attribId)
         if(testState == "Completed" || testState == "Filed"){
-            window.location = 'resultsNeuro.html'
+            if(testType == "discalc"){
+                window.location = 'resultsPatientDiscalc.html'
+            }else if(testType = "rey"){
+                window.location = 'resultsNeuro.html'
+            }
         } 
     };
 }
@@ -131,13 +149,14 @@ function scheduleTestDiscalc(){
     })
 }
 
-function rescheduleTest(testId){
+function rescheduleTest(testId, testType){
+    console.log("Entrou")
     if(confirm("Quer remarcar o teste "+testId+"?")){
         var comment = prompt("Adicione aqui a razão da remarcação");
         $.ajax({
             url:"/api/neuros/"+neuroId+"/patients/"+patientId+"/tests/"+testId+"/reschedule",
             method:"post",
-            data: {attribId: attribId, comment: "Remarcado porque: "+comment},
+            data: {attribId: attribId, comment: "Remarcado porque: "+comment, testType: testType},
             success: function(data, status){
                 alert("Teste remarcado com sucesso");
                 location.reload();

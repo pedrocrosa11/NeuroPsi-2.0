@@ -33,15 +33,27 @@ function patientInfoHtmlInjection(patient){
 function testsHtmlInjection(tests){
     var str="";
     for(t of tests){
+        var testType
+        if(t.discalcId){
+            testType = "discalc"
+        }else if(t.reyId){
+            testType = "rey"
+        }
         str += "<tr id="+t.testId+"><td>"+t.testId+"</td><td>"+t.testState+"</td><td>";
         if(t.testState == "Pending"){
-            str+="<img id='binDelete' title='Cancelar teste' onclick=cancelTest("+t.testId+") onmouseover='disableOnclick("+t.testId+")' onmouseout='enableOnclick("+t.testId+",\""+t.testState+"\","+t.attribId+")' src='images/binDelete.png'>";
+            str+="<img id='binDelete' title='Cancelar teste' onclick=cancelTest("+t.testId+") onmouseover='disableOnclick("+t.testId+")' onmouseout='enableOnclick("+t.testId+","+t.attribId+","+t.testState+","+testType+")' src='images/binDelete.png'>";
         }
         str += "</td><td>"+t.assignedDate+"</td><td>"+t.neuro+"</td><td>"+t.completedDate+"</td><td>"+t.comment+"</td></tr>";
     }
     testsT.innerHTML = str;
     for(t of tests){
-        enableOnclick(t.testId, t.testState, t.attribId);
+        var testType
+        if(t.discalcId){
+            testType = "discalc"
+        }else if(t.reyId){
+            testType = "rey"
+        }
+        enableOnclick(t.testId, t.attribId, t.testState, testType);
     }
 }
 
@@ -50,9 +62,9 @@ function disableOnclick(testId){
     elements.onclick = null;
 }
 
-function enableOnclick(testId, testState, attribId){
+function enableOnclick(testId, attribId, testSate, testType){
     var elements = document.getElementById(testId);
-    elements.onclick = openDiscalcTest(testId, String(testState), attribId);
+    elements.onclick = openTest(testId, attribId, testSate, testType);
 }
 
 function cancelTest(testId){
@@ -73,26 +85,22 @@ function cancelTest(testId){
     }
 }
 
-function openTest(testId, testState, attribId) {
+function openTest(testId, attribId, testState, testType) {
     return function(){
         sessionStorage.setItem("testId", testId)
         sessionStorage.setItem("attribId", attribId)
         if(testState == "Pending"){
-            window.location = 'testPatient.html';
+            if(testType == "discalc"){
+                window.location = 'testDiscalc.html';
+            }else if(testType == "rey"){
+                window.location = 'testPatient.html';
+            }
         }else if(testState == "Completed"){
-            window.location = 'resultsPatient.html'
-        } 
-    };
-}
-
-function openDiscalcTest(testId, testState, attribId) {
-    return function(){
-        sessionStorage.setItem("testId", testId)
-        sessionStorage.setItem("attribId", attribId)
-        if(testState == "Pending"){
-            window.location = 'testDiscalc.html';
-        }else if(testState == "Completed"){
-            window.location = 'resultsPatientDiscalc.html'
+            if(testType == "discalc"){
+                window.location = 'resultsPatientDiscalc.html'
+            }else if(testType == "rey"){
+                window.location = 'resultsPatient.html'
+            }
         } 
     };
 }

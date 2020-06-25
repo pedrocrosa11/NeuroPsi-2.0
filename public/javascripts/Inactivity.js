@@ -16,9 +16,9 @@ var inactivityTime = function () {
 
     function resetTimer() {
         clearTimeout(time);
-        time = setTimeout(logout, 300000)
+        time = setTimeout(logout, 10000)
         // 1000 milliseconds = 1 second
-        // Currently is 120 sec (15sec)
+        // Currently is 300 sec (5min)
     }
 };
 

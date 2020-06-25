@@ -60,7 +60,8 @@ router.post('/:neuroId/patients/:patientId/tests/discalculia', function(req, res
 });
 
 router.post('/:neuroId/patients/:patientId/tests/:testId/reschedule', function(req, res, next){
-    neuroDAO.rescheduleTest(req.params.testId, req.body.attribId, req.body.comment, function(err, result){
+    console.log(re.body.test)
+    neuroDAO.rescheduleTest(req.params.testId, req.body.attribId, req.body.comment, req.body.testType, function(err, result){
         if(err){
             res.statusMessage = result.status;
             res.status(result.code).json(err);

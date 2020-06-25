@@ -111,7 +111,7 @@ module.exports.getPatientTests = function(patientId, callback, next){
             callback(err, {code:500, status:"Error in the connection to the database"})
             return;
         }
-        conn.query("select testId, testState, assignedDate, name as neuro, attribId, completedDate, comment from User inner join Neuropsi on neuro_userId = userId inner join Attribution on attrib_neuroId = neuroId inner join Test on test_attribId = attribId where attrib_fileId = ? order by assignedDate desc;",
+        conn.query("select min(discalcId) as discalcId, min(reyId) as reyId, testId, testState, assignedDate, name as neuro, attribId, completedDate, comment from User inner join Neuropsi on neuro_userId = userId inner join Attribution on attrib_neuroId = neuroId inner join Test on test_attribId = attribId left join Discalculia on testId = discalc_testId left join Rey on testId = rey_testId where attrib_fileId = ? group by (testId) order by assignedDate desc;",
         [patientId], function(err, result){
             conn.release();
             if(err){
@@ -125,6 +125,7 @@ module.exports.getPatientTests = function(patientId, callback, next){
                     t.comment = "-";
                 }
             }
+            console.log(result)
             callback(false, {code:200, status:"Ok", tests: result});
         })
     })

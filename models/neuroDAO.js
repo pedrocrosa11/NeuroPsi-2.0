@@ -160,7 +160,7 @@ module.exports.getNeuroPatientTestInfo = function(attribId, callback, next){
             callback(err, {code:500, status:"Error in the connection to the database"})
             return;
         }
-        conn.query("select testId, testState, assignedDate, attribId, completedDate, comment from User inner join Neuropsi on neuro_userId = userId inner join Attribution on attrib_neuroId = neuroId inner join Test on test_attribId = attribId where attribId=? order by assignedDate desc;",
+        conn.query("select min(discalcId) as discalcId, min(reyId) as reyId, testId, testState, assignedDate, attribId, completedDate, comment from User inner join Neuropsi on neuro_userId = userId inner join Attribution on attrib_neuroId = neuroId inner join Test on test_attribId = attribId left join Discalculia on testId = discalc_testId left join Rey on testId = rey_testId where attribId=? group by (testId) order by assignedDate desc;",
         [attribId], function(err, result){
             conn.release();
             if(err){
@@ -244,7 +244,7 @@ module.exports.fileTest = function(testId, comment, callback){
     })
 }
 
-module.exports.rescheduleTest = function(testId, attribId, comment, callback){
+module.exports.rescheduleTest = function(testId, attribId, comment, testType, callback){
     mysql.getConnection(function(err, conn){
         if(err){
             callback(err, {code:500, status:"Error in the connection to the database"})
@@ -260,7 +260,12 @@ module.exports.rescheduleTest = function(testId, attribId, comment, callback){
                     callback(err, {code:500, status: "Error in a database query"});
                     return;
                 }
-                conn.query("insert into Test (assignedDate, test_attribId) values (?, ?);", [new Date(), attribId], function(err, result){
+                if(testType == "discalc"){
+                    scheduleTestDiscalc(attribId, callback)
+                }else if(testType == "ray"){
+                    scheduleTest(attribId, callback);
+                }
+                /*conn.query("insert into Test (assignedDate, test_attribId) values (?, ?);", [new Date(), attribId], function(err, result){
                     if(err){
                         callback(err, {code:500, status: "Error in a database query"});
                         return;
@@ -273,7 +278,7 @@ module.exports.rescheduleTest = function(testId, attribId, comment, callback){
                         }
                         callback(false, {code:200, status:"Ok"});
                     })
-                }); 
+                });*/ 
             });
         });
     })

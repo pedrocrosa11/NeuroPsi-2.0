@@ -26,6 +26,24 @@ module.exports.getUser = function(userParams, callback){
     })
 }
 
+module.exports.getDiscalcResults = function(discalcId, callback){
+  mysql.getConnection(function(err, conn){
+      if(err){
+          callback(err, {code:500, status: "Error in the connection to the database"});
+          return
+      }
+      conn.query("select * from Discalculia where discalc_testId = ?", [discalcId], function(err, result){
+          conn.release();
+          if (err){
+              callback(err, {code:500, status: "Error in a database query"});
+              return;
+          }
+          callback(false, {code: 200, status:"Ok", discalc: result});
+      })
+  })
+}
+
+
 
     /**
      *
